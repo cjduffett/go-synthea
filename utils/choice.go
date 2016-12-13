@@ -6,10 +6,6 @@ import (
 	"sort"
 )
 
-// DecimalPlaces is the number of decimal places to round all
-// floating point numbers to.
-var DecimalPlaces = 6
-
 // Choice is an element of a weighted choice array
 type Choice struct {
 	Weight float64
@@ -56,7 +52,7 @@ func cleanChoices(choices []Choice) []Choice {
 	for i := range choices {
 		weight := choices[i].Weight
 		if weight <= 0 {
-			panicOnBadChoice("Choice weight <= 0")
+			panicOnBadChoice(fmt.Sprintf("Choice %v weight %f <= 0", choices[i].Item, weight))
 		}
 
 		total += weight

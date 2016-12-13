@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cjduffett/synthea/world"
+	"github.com/cjduffett/synthea/sequential"
 )
 
 // ParseSubCommands parses the specified command and its arguments
@@ -28,7 +28,7 @@ func ParseSubCommands(cmd string, args []string) {
 		// parse the args
 		sequentialCommand.Parse(args)
 		if sequentialCommand.Parsed() {
-			world.NewSequentialTask(*numPatients).Run()
+			sequential.NewTask(*numPatients).Run()
 		}
 
 	default:
