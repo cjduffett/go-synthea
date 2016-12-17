@@ -51,19 +51,36 @@ func (gmf *GMF) loadModule(filePath string) error {
 		return err
 	}
 
-	var module Module
-	err = json.Unmarshal(data, &module)
+	// First load the module in its JSON representation
+	var jmodule JSONModule
+	err = json.Unmarshal(data, &jmodule)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("Loaded module '%s'\n", module.Name)
-	gmf.modules = append(gmf.modules, module)
+	// Then parse the JSON representation into a concrete Module and States
+	module := NewModule(jmodule.Name)
+
+	for name, jsonState := range jmodule.JSONStates {
+		state, err := parseState(name, jsonState)
+		if err != nil {
+			return err
+		}
+		module.states[name] = state
+	}
+	gmf.modules = append(gmf.modules, *module)
+
+	fmt.Printf("Loaded module '%s'\n", module.name)
 	return nil
 }
 
-func (gmf *GMF) Process(entity *entity.Entity, time time.Time) {
-	// for _, module := range gmf.modules {
-	// 	module.Process(entity, time)
-	// }
+// Run runs an entity through all of the modules at a given time.
+func (gmf *GMF) Run(entity *entity.Entity, time time.Time) {}
+
+func getStateNames(stateMap map[string]JSONState) []string {
+	var keys []string
+	for key := range stateMap {
+		keys = append(keys, key)
+	}
+	return keys
 }

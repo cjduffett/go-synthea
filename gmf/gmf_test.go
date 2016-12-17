@@ -22,8 +22,8 @@ func (suite *GMFTestSuite) TestLoadEmptyModule() {
 	suite.Equal(1, len(gmf.modules))
 
 	module := gmf.modules[0]
-	suite.Equal("Empty Module", module.Name)
-	keys := getKeys(module.States)
+	suite.Equal("Empty Module", module.name)
+	keys := getKeys(module.states)
 	suite.Equal(0, len(keys))
 }
 
@@ -35,8 +35,8 @@ func (suite *GMFTestSuite) TestLoadBasicModule() {
 	suite.Equal(1, len(gmf.modules))
 
 	module := gmf.modules[0]
-	suite.Equal("Basic Module", module.Name)
-	keys := getKeys(module.States)
+	suite.Equal("Basic Module", module.name)
+	keys := getKeys(module.states)
 	suite.Equal(2, len(keys))
 }
 
@@ -48,17 +48,17 @@ func (suite *GMFTestSuite) TestLoadModules() {
 	suite.Equal(2, len(gmf.modules))
 
 	module := gmf.modules[0]
-	suite.Equal("Basic Module", module.Name)
-	keys := getKeys(module.States)
+	suite.Equal("Basic Module", module.name)
+	keys := getKeys(module.states)
 	suite.Equal(2, len(keys))
 
 	module = gmf.modules[1]
-	suite.Equal("Empty Module", module.Name)
-	keys = getKeys(module.States)
+	suite.Equal("Empty Module", module.name)
+	keys = getKeys(module.states)
 	suite.Equal(0, len(keys))
 }
 
-func getKeys(stateMap map[string]interface{}) []string {
+func getKeys(stateMap map[string]State) []string {
 	var keys []string
 	for key := range stateMap {
 		keys = append(keys, key)
