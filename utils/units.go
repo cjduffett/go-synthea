@@ -1,5 +1,7 @@
 package utils
 
+import "time"
+
 const (
 	seconds = "seconds"
 	minutes = "minutes"
@@ -17,8 +19,22 @@ func IsValidUnitOfTime(unit string) bool {
 	return found
 }
 
-// IsValidUnitOfAge returns true if the given unit is a valid unit of age.
-// Currently, units of time and age are the same.
-func IsValidUnitOfAge(unit string) bool {
-	return IsValidUnitOfTime(unit)
+// ConvertTimeToDuration converts a valid unit of time to a time.Duration.
+func ConvertTimeToDuration(unit string) time.Duration {
+	switch unit {
+	case seconds:
+		return time.Second
+	case minutes:
+		return time.Minute
+	case hours:
+		return time.Hour
+	case days:
+		return time.Hour * 24
+	case weeks:
+		return time.Hour * 24 * 7
+	case years:
+		return time.Hour * 24 * 365
+	default:
+		panic("Invalid unit of time")
+	}
 }
