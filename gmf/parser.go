@@ -80,7 +80,7 @@ type JSONConditional struct {
 }
 
 // JSONComplex is a newly unmarshalled Complex element of a
-// conditional transition. The Complex type can't be used directly
+// complex transition. The Complex type can't be used directly
 // because of the added complexity of unmarshalling the Condition.
 type JSONComplex struct {
 	Condition     JSONCondition  `json:"condition"`
@@ -216,7 +216,7 @@ func parseComplexTransition(jsonComplexes []JSONComplex) []Complex {
 	for i, jcomplex := range jsonComplexes {
 		var condition Condition
 		if jcomplex.Condition.ConditionType == "" && i == len(jsonComplexes)-1 {
-			// The last conditional may omit a condition and specify just a transition
+			// The last complex may omit a condition and specify just a set of distributions
 			condition = nil
 		} else {
 			condition = parseCondition(jcomplex.Condition)
@@ -319,7 +319,7 @@ func parseCondition(jsonCondition JSONCondition) Condition {
 		}
 	case "Not":
 		return &NotCondition{
-			condition: parseCondition(jsonCondition),
+			condition: parseCondition(*jsonCondition.Condition),
 		}
 	case "True":
 		return &TrueCondition{}

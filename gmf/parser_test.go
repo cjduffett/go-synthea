@@ -575,6 +575,327 @@ func (suite *ParserTestSuite) TestParseComplexTransition() {
 // This section tests parsing the different condition types. This does not test
 // if the conditions evaluate correctly - see conditions_test.go.
 
-func (suite *ParserTestSuite) TestParseConditions() {
+func (suite *ParserTestSuite) TestParseGenderCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
 
+	state, _ := gmf.modules[0].states["Gender"].(*GuardState)
+	condition := &GenderCondition{
+		gender: "F",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAgeCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Age"].(*GuardState)
+	condition := &AgeCondition{
+		operator: ">",
+		quantity: 40,
+		unit:     "years",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseDateCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Date"].(*GuardState)
+	condition := &DateCondition{
+		operator: "==",
+		year:     1956,
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseSocioeconomicStatusCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Socioeconomic_Status"].(*GuardState)
+	condition := &SocioStatusCondition{
+		category: "Low",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseRaceCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Race"].(*GuardState)
+	condition := &RaceCondition{
+		race: "Asian",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseSymptomCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Symptom"].(*GuardState)
+	condition := &SymptomCondition{
+		symptom:  "sweating",
+		operator: ">",
+		value:    40,
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseObservationConditionByReference() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Observation_By_Reference"].(*GuardState)
+	condition := &ObservationCondition{
+		referencedByAttribute: "observation",
+		operator:              "==",
+		value:                 5,
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseObservationConditionByCode() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Observation_By_Code"].(*GuardState)
+	condition := &ObservationCondition{
+		codes:    []Code{Code{System: "LOINC", Code: "1234-5", Display: "Height"}},
+		operator: "<",
+		value:    60,
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseActiveConditionByReference() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Active_Condition_By_Reference"].(*GuardState)
+	condition := &ActiveCondition{
+		referencedByAttribute: "condition",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseActiveConditionByCode() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Active_Condition_By_Code"].(*GuardState)
+	condition := &ActiveCondition{
+		codes: []Code{Code{System: "SNOMED-CT", Code: "44054006", Display: "Diabetes mellitus"}},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseActiveMedicationByReference() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Active_Medication_By_Reference"].(*GuardState)
+	condition := &ActiveMedication{
+		referencedByAttribute: "medication",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseActiveMedicationByCode() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Active_Medication_By_Code"].(*GuardState)
+	condition := &ActiveMedication{
+		codes: []Code{Code{System: "RxNorm", Code: "123456", Display: "Examplitol 100mg"}},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseActiveCarePlanByReference() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Active_CarePlan_By_Reference"].(*GuardState)
+	condition := &ActiveCarePlan{
+		referencedByAttribute: "careplan",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseActiveCarePlanByCode() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Active_CarePlan_By_Code"].(*GuardState)
+	condition := &ActiveCarePlan{
+		codes: []Code{Code{System: "SNOMED-CT", Code: "12345678", Display: "Examplitis care"}},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParsePriorStateCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["PriorState"].(*GuardState)
+	condition := &PriorStateCondition{
+		name: "FooState",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAttributeStringCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["StringAttribute"].(*GuardState)
+	condition := &AttributeCondition{
+		attribute: "attribute",
+		operator:  "==",
+		value:     "foo",
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAttributeNumericCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["NumericAttribute"].(*GuardState)
+	condition := &AttributeCondition{
+		attribute: "attribute",
+		operator:  "<=",
+		value:     7.0,
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAttributeBooleanCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["BooleanAttribute"].(*GuardState)
+	condition := &AttributeCondition{
+		attribute: "attribute",
+		operator:  "==",
+		value:     false,
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAndCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["And"].(*GuardState)
+	condition := &AndCondition{
+		conditions: []Condition{
+			&TrueCondition{},
+			&TrueCondition{},
+		},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseOrCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Or"].(*GuardState)
+	condition := &OrCondition{
+		conditions: []Condition{
+			&TrueCondition{},
+			&FalseCondition{},
+		},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAtLeastCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["At_Least"].(*GuardState)
+	condition := &AtLeastCondition{
+		minimum: 2,
+		conditions: []Condition{
+			&TrueCondition{},
+			&TrueCondition{},
+			&FalseCondition{},
+		},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseAtMostCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["At_Most"].(*GuardState)
+	condition := &AtMostCondition{
+		maximum: 2,
+		conditions: []Condition{
+			&TrueCondition{},
+			&TrueCondition{},
+			&TrueCondition{},
+		},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseNotCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Not"].(*GuardState)
+	condition := &NotCondition{
+		condition: &FalseCondition{},
+	}
+	suite.Equal(condition, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseTrueCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["True"].(*GuardState)
+	suite.Equal(&TrueCondition{}, state.allow)
+}
+
+func (suite *ParserTestSuite) TestParseFalseCondition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/conditions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["False"].(*GuardState)
+	suite.Equal(&FalseCondition{}, state.allow)
 }

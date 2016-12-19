@@ -1,0 +1,312 @@
+{
+    "name": "Conditions Test Fixture",
+    "remarks": [
+        "For convenience all condition types are piggybacked on Guard states, ",
+        "and all transitions in this module are direct transitions."
+    ],
+    "states": {
+        "Gender": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Gender",
+                "gender": "F"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Age": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Age",
+                "operator": ">",
+                "quantity": 40,
+                "unit": "years"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Date": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Date",
+                "operator": "==",
+                "year": 1956
+            },
+            "direct_transition": "Terminal"
+		},
+
+        "Socioeconomic_Status": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Socioeconomic Status",
+                "category": "Low"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Race": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Race",
+                "race": "Asian"
+            },
+            "direct_transition": "Terminal"
+        },
+
+         "Symptom": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Symptom",
+                "symptom": "sweating",
+                "operator": ">",
+                "value": 40
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Observation_By_Reference": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Observation",
+                "referenced_by_attribute": "observation",
+                "operator": "==",
+                "value": 5
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Observation_By_Code": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Observation",
+                "codes": [
+                    {
+                        "system": "LOINC",
+                        "code": "1234-5",
+                        "display": "Height"
+                    }
+                ],
+                "operator": "<",
+                "value": 60
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Active_Condition_By_Reference": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Active Condition",
+                "referenced_by_attribute": "condition"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Active_Condition_By_Code": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Active Condition",
+                "codes": [
+                    {
+                        "system": "SNOMED-CT",
+                        "code": "44054006",
+                        "display": "Diabetes mellitus"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Active_Medication_By_Reference": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Active Medication",
+                "referenced_by_attribute": "medication"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Active_Medication_By_Code": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Active Medication",
+                "codes": [
+                    {
+                        "system": "RxNorm",
+                        "code": "123456",
+                        "display": "Examplitol 100mg"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Active_CarePlan_By_Reference": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Active CarePlan",
+                "referenced_by_attribute": "careplan"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Active_CarePlan_By_Code": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Active CarePlan",
+                "codes": [
+                    {
+                        "system": "SNOMED-CT",
+                        "code": "12345678",
+                        "display": "Examplitis care"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "PriorState": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "PriorState",
+                "name": "FooState"
+            },
+            "direct_transition": "Terminal"
+		},
+
+        "StringAttribute": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Attribute",
+                "attribute": "attribute",
+                "operator": "==",
+                "value": "foo"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "NumericAttribute": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Attribute",
+                "attribute": "attribute",
+                "operator": "<=",
+                "value": 7
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "BooleanAttribute": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Attribute",
+                "attribute": "attribute",
+                "operator": "==",
+                "value": false
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "And": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "And",
+                "conditions": [
+                    {
+                        "condition_type": "True"
+                    },
+                    {
+                        "condition_type": "True"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Or": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Or",
+                "conditions": [
+                    {
+                        "condition_type": "True"
+                    },
+                    {
+                        "condition_type": "False"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "At_Least": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "At Least",
+                "minimum": 2,
+                "conditions": [
+                    {
+                        "condition_type": "True"
+                    },
+                    {
+                        "condition_type": "True"
+                    },
+                    {
+                        "condition_type": "False"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "At_Most": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "At Most",
+                "maximum": 2,
+                "conditions": [
+                    {
+                        "condition_type": "True"
+                    },
+                    {
+                        "condition_type": "True"
+                    },
+                    {
+                        "condition_type": "True"
+                    }
+                ]
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Not": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Not",
+                "condition": {
+                    "condition_type": "False"
+                }
+            },
+            "direct_transition": "Terminal"
+        },
+
+         "True": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "True"
+            },
+            "direct_transition": "Terminal"
+        },
+
+         "False": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "False"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Terminal": {
+            "type": "Terminal"
+        }
+    }
+}
