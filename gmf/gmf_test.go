@@ -46,7 +46,7 @@ func (suite *GMFTestSuite) TestLoadInvalidModule() {
 	var err error
 	suite.NotPanics(func() { err = gmf.loadModule("../fixtures/invalid_module.json") })
 	suite.NotNil(err)
-	suite.Equal(errors.New("Invalid module: Missing 'name' or 'states'"), err)
+	suite.Equal(errors.New("Invalid Module: Missing 'name' or 'states'"), err)
 }
 
 func (suite *GMFTestSuite) TestLoadModules() {

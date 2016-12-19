@@ -1,0 +1,11 @@
+{
+    "name": "Invalid State: No Transition",
+    "remarks": [
+        "For any state other than Terminal, not having a transition is invalid."
+    ],
+    "states": {
+        "Initial": {
+            "type": "Initial"
+        }
+    }
+}

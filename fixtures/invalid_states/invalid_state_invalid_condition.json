@@ -1,0 +1,10 @@
+{
+    "name": "Invalid State: Invalid Condition",
+    "states": {
+        "Guard": {
+            "type": "Guard",
+            "allow": {"foo": "bar"},
+            "direct_transition": "Terminal"
+        }
+    }
+}

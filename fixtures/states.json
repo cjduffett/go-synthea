@@ -1,0 +1,319 @@
+{
+    "name": "States Test Fixture",
+    "remarks": [
+        "This fixture is intended to test only the unmarshalling of states ",
+        "into their respective Go types. All states in this module transition ",
+        "direct to the next state for simplicity."
+    ],
+    "states": {
+        "Initial": {
+            "type": "Initial",
+            "direct_transition": "Simple"
+        },
+
+        "Simple": {
+            "type": "Simple",
+            "direct_transition": "Guard"
+        },        
+
+        "Guard": {
+            "type": "Guard",
+            "allow": {
+                "condition_type": "Gender",
+                "gender": "F"
+            },
+            "direct_transition": "Exact_Delay"
+        },
+
+        "Exact_Delay": {
+            "type": "Delay",
+            "exact": {
+                "quantity": 1,
+                "unit": "years"
+            },
+            "direct_transition": "Range_Delay"
+        },
+
+        "Range_Delay": {
+            "type": "Delay",
+            "range": {
+                "low": 1,
+                "high": 3,
+                "unit": "years"
+            },
+            "direct_transition": "ConditionOnset"
+        },
+
+        "ConditionOnset": {
+            "type": "ConditionOnset",
+            "target_encounter": "Encounter",
+            "assign_to_attribute": "condition",
+            "codes": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "44054006",
+                    "display": "Diabetes mellitus"
+                }
+            ],
+            "direct_transition": "Encounter"
+        },
+
+        "Encounter": {
+            "type": "Encounter",
+            "reason": "condition",
+            "encounter_class": "ambulatory",
+            "codes": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "12345678",
+                    "display": "Encounter for problem"
+                }
+            ],
+            "direct_transition": "MedicationOrder"
+        },
+
+        "MedicationOrder": {
+            "type": "MedicationOrder",
+            "target_encounter": "Encounter",
+            "assign_to_attribute": "medication",
+            "reason": "condition",
+            "codes": [
+                {
+                    "system": "RxNorm",
+                    "code": "123456",
+                    "display": "Acetaminophen 325mg [Tylenol]"
+                }
+            ],
+            "direct_transition": "CarePlanStart"
+        },
+
+        "CarePlanStart": {
+            "type": "CarePlanStart",
+            "target_encounter": "Encounter",
+            "assign_to_attribute": "careplan",
+            "reason": "condition",
+            "codes": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "987654321",
+                    "display": "Examplitis care"
+                }
+            ],
+            "activities": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "987654321",
+                    "display": "Examplitis therapy"
+                },
+                {
+                    "system": "SNOMED-CT",
+                    "code": "987654321",
+                    "display": "Examplotomy"
+                }
+            ],
+            "direct_transition": "Procedure"
+        },
+
+        "Procedure": {
+            "type": "Procedure",
+            "target_encounter": "Encounter",
+            "reason": "condition",
+            "codes": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "987654321",
+                    "display": "Examplotomy"
+                }
+            ],
+            "direct_transition": "Condition_End_By_Attribute"
+        },
+
+        "Condition_End_By_Attribute": {
+            "type": "ConditionEnd",
+            "referenced_by_attribute": "condition",
+            "direct_transition": "Condition_End_By_Name"
+        },
+
+        "Condition_End_By_Name": {
+            "type": "ConditionEnd",
+            "condition_onset": "ConditionOnset",
+            "direct_transition": "Condition_End_By_Code"
+        },
+
+        "Condition_End_By_Code": {
+            "type": "ConditionEnd",
+            "codes": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "44054006",
+                    "display": "Diabetes mellitus"
+                }
+            ],
+            "direct_transition": "Medication_End_By_Attribute"
+        },
+
+        "Medication_End_By_Attribute": {
+            "type": "MedicationEnd",
+            "referenced_by_attribute": "medication",
+            "direct_transition": "Medication_End_By_Name"
+        },
+
+        "Medication_End_By_Name": {
+            "type": "MedicationEnd",
+            "medication_order": "MedicationOrder",
+            "direct_transition": "Medication_End_By_Code"
+        },
+
+        "Medication_End_By_Code": {
+            "type": "MedicationEnd",
+            "codes": [
+                {
+                    "system": "RxNorm",
+                    "code": "123456",
+                    "display": "Acetaminophen 325mg [Tylenol]"
+                }
+            ],
+            "direct_transition": "CarePlan_End_By_Attribute"
+        },
+
+        "CarePlan_End_By_Attribute": {
+            "type": "CarePlanEnd",
+            "referenced_by_attribute": "careplan",
+            "direct_transition": "CarePlan_End_By_Name"
+        },
+
+        "CarePlan_End_By_Name": {
+            "type": "CarePlanEnd",
+            "careplan": "CarePlanStart",
+            "direct_transition": "CarePlan_End_By_Code"
+        },
+
+        "CarePlan_End_By_Code": {
+            "type": "CarePlanEnd",
+            "codes": [
+                {
+                    "system": "SNOMED-CT",
+                    "code": "987654321",
+                    "display": "Examplitis care"
+                }
+            ],
+            "direct_transition": "Exact_Observation"
+        },
+
+        "Exact_Observation": {
+            "type": "Observation",
+            "target_encounter": "Encounter",
+            "exact": {
+                "quantity": 5,
+                "unit": "mL"
+            },
+            "codes": [
+                {
+                    "system": "LOINC",
+                    "code": "1234-5",
+                    "display": "Volume"
+                }
+            ],
+            "direct_transition": "Range_Observation"
+        },
+
+        "Range_Observation": {
+            "type": "Observation",
+            "target_encounter": "Encounter",
+            "range": {
+                "low": 2,
+                "high": 7,
+                "unit": "mg"
+            },
+            "codes": [
+                {
+                    "system": "LOINC",
+                    "code": "1234-5",
+                    "display": "Weight"
+                }
+            ],
+            "direct_transition": "Exact_Symptom"
+        },
+        
+        "Exact_Symptom": {
+            "type": "Symptom",
+            "cause": "I'd rather have a bottle in front of me...",
+            "exact": {
+                "quantity": 50
+            },
+            "direct_transition": "Range_Symptom"
+        },
+
+        "Range_Symptom": {
+            "type": "Symptom",
+            "cause": "...than a frontal lobotomy.",
+            "range": {
+                "low": 10,
+                "high": 20
+            },
+            "direct_transition": "SetAttributeString"
+        },
+
+        "SetAttributeString": {
+            "type": "SetAttribute",
+            "attribute": "attribute",
+            "value": "string",
+            "direct_transition": "SetAttributeNil"
+        },
+
+        "SetAttributeNumeric": {
+            "type": "SetAttribute",
+            "attribute": "attribute",
+            "value": 7.1,
+            "direct_transition": "SetAttributeNil"
+        },
+
+        "SetAttributeBoolean": {
+            "type": "SetAttribute",
+            "attribute": "attribute",
+            "value": false,
+            "direct_transition": "SetAttributeNil"
+        },
+
+        "SetAttributeNil": {
+            "type": "SetAttribute",
+            "attribute": "attribute",
+            "direct_transition": "Counter"
+        },
+
+        "Counter": {
+            "type": "Counter",
+            "attribute": "attribute",
+            "action": "increment",
+            "direct_transition": "Immediate_Death"
+        },
+
+        "Immediate_Death": {
+            "type": "Death",
+            "direct_transition": "Exact_Death"
+        },
+
+        "Exact_Death": {
+            "type": "Death",
+            "exact": {
+                "quantity": 1,
+                "unit": "days"
+            },
+            "direct_transition": "Range_Death"
+        },
+
+        "Range_Death": {
+            "type": "Death",
+            "range": {
+                "low": 1,
+                "high": 2,
+                "unit": "days"
+            },
+            "direct_transition": "Terminal"
+        },
+
+        "Terminal": {
+            "type": "Terminal"
+        }
+    }
+}

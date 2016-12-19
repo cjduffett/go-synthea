@@ -1,0 +1,217 @@
+{
+  "name": "Transitions Test Fixture",
+  "states": {
+    "Direct_Transition": {
+      "type": "Simple",
+      "remarks": [
+        "=======================================================================",
+        " DIRECT TRANSITION                                                     ",
+        "======================================================================="
+      ],
+      "direct_transition": "Direct_Transition_Destination"
+    },
+
+    "Direct_Transition_Destination": {
+      "type": "Simple"
+    },
+
+    "Conditional_Transition": {
+      "type": "Simple",
+      "remarks": [
+        "=======================================================================",
+        " CONDITIONAL TRANSITION                                                ",
+        "======================================================================="
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 20,
+            "unit": "years"
+          },
+          "transition": "Age_Less_Than_20"
+        },
+        {
+          "condition": {
+            "condition_type": "Age",
+            "operator": "<",
+            "quantity": 40,
+            "unit": "years"
+          },
+          "transition": "Age_Less_Than_40"
+        },
+        {
+          "transition": "Fallback_Conditional_Transition"
+        }
+      ]
+    },
+
+    "Age_Less_Than_20": {
+      "type": "Simple"
+    },
+
+    "Age_Less_Than_40": {
+      "type": "Simple"
+    },
+
+    "Fallback_Conditional_Transition": {
+      "type": "Simple"
+    },
+
+    "Conditional_Transition_No_Fallback": {
+      "type": "Simple",
+      "remarks": [
+        "Should transition to Terminal if the patient is male."
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Gender",
+            "gender": "F"
+          },
+          "transition": "Female"
+        }
+      ]
+    },
+
+    "Female": {
+      "type": "Simple"
+    },
+
+    "Distributed_Transition": {
+      "type": "Simple",
+      "remarks": [
+        "=======================================================================",
+        " DISTRIBUTED TRANSITION                                                ",
+        "======================================================================="
+      ],
+      "distributed_transition": [
+        {
+          "distribution": 0.3,
+          "transition": "Distribution_1"
+        },
+        {
+          "distribution": 0.6,
+          "transition": "Distribution_2"
+        },
+        {
+          "distribution": 0.1,
+          "transition": "Distribution_3"
+        }
+      ]
+    },
+
+    "Distribution_1": {
+      "type": "Simple"
+    },
+
+    "Distribution_2": {
+      "type": "Simple"
+    },
+
+    "Distribution_3": {
+      "type": "Simple"
+    },
+
+    "Complex_Transition": {
+      "type": "Simple",
+      "remarks": [
+        "=======================================================================",
+        " COMPLEX TRANSITION                                                    ",
+        "======================================================================="
+      ],
+      "complex_transition": [
+        {
+          "condition": {
+            "condition_type": "Race",
+            "race": "White"
+          },
+          "distributions": [
+            {
+              "distribution": 0.5,
+              "transition": "Complex_M_Distribution_1"
+            },
+            {
+              "distribution": 0.5,
+              "transition": "Complex_M_Distribution_2"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "condition_type": "Race",
+            "race": "Hispanic"
+          },
+          "distributions": [
+            {
+              "distribution": 0.7,
+              "transition": "Complex_F_Distribution_1"
+            },
+            {
+              "distribution": 0.3,
+              "transition": "Complex_F_Distribution_2"
+            }
+          ]
+        },
+        {
+          "distributions": [
+            {
+              "distribution": 1,
+              "transition": "Fallback_Complex_Transition"
+            }
+          ]
+        }
+      ]
+    },
+
+    "Complex_M_Distribution_1": {
+      "type": "Simple"
+    },
+
+    "Complex_M_Distribution_2": {
+      "type": "Simple"
+    },
+
+    "Complex_F_Distribution_1": {
+      "type": "Simple"
+    },
+
+    "Complex_F_Distribution_2": {
+      "type": "Simple"
+    },
+
+    "Fallback_Complex_Transition": {
+      "type": "Simple"
+    },
+
+    "Complex_Transition_No_Fallback": {
+      "type": "Simple",
+      "complex_transition": [
+        {
+          "condition": {
+            "condition_type": "Gender",
+            "gender": "M"
+          },
+          "remarks": [
+            "Should transition to Terminal if the patient is female."
+          ],
+          "distributions": [
+            {
+              "distribution": 1,
+              "transition": "Male"
+            }
+          ]
+        }
+      ]
+    },
+
+    "Male": {
+      "type": "Simple"
+    },
+
+    "Terminal": {
+      "type": "Terminal"
+    }
+  }
+}

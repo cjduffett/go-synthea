@@ -1,0 +1,9 @@
+{
+    "name": "Invalid State: Unknown Type",
+    "states": {
+        "Foo": {
+            "type": "Bar",
+            "direct_transition": "Terminal"
+        }
+    }
+}

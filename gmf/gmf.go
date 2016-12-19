@@ -60,7 +60,7 @@ func (gmf *GMF) loadModule(filePath string) error {
 
 	// If the module doesn't have a name and states it's not valid
 	if jmodule.Name == "" && len(jmodule.JSONStates) == 0 {
-		return errors.New("Invalid module: Missing 'name' or 'states'")
+		return errors.New("Invalid Module: Missing 'name' or 'states'")
 	}
 
 	// Then parse the JSON representation into a concrete Module and States
@@ -69,7 +69,7 @@ func (gmf *GMF) loadModule(filePath string) error {
 	for name, jsonState := range jmodule.JSONStates {
 		state, err := parseState(name, jsonState)
 		if err != nil {
-			return err
+			return fmt.Errorf("Invalid Module: %s", err.Error())
 		}
 		module.states[name] = state
 	}
