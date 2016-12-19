@@ -436,3 +436,145 @@ func (suite *ParserTestSuite) TestParseInvalidStateInvalidCondition() {
 	suite.NotNil(err)
 	suite.Equal(errors.New("Invalid Module: Invalid State 'Guard': No condition type found"), err)
 }
+
+func (suite *ParserTestSuite) TestParseInvalidStateUnknownConditionType() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/invalid_states/invalid_state_invalid_condition_type.json")
+	suite.NotNil(err)
+	suite.Equal(errors.New("Invalid Module: Invalid State 'Guard': Unknown condition type 'Foo'"), err)
+}
+
+// ============================================================================
+// TEST TRANSITIONS
+// ============================================================================
+// This section tests parsing the different transition types. This does not test
+// if the transitions evaluate correctly - see transitions_test.go.
+
+func (suite *ParserTestSuite) TestParseDirectTransition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/transitions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Direct_Transition"].(*SimpleState)
+	suite.Equal(directTransition("Direct_Transition_Destination"), state.transition)
+}
+
+func (suite *ParserTestSuite) TestParseConditionalTransition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/transitions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Conditional_Transition"].(*SimpleState)
+	conditionalTransition := &ConditionalTransition{
+		conditionals: []Conditional{
+			Conditional{
+				Condition: &AgeCondition{
+					operator: "<",
+					quantity: 20,
+					unit:     "years",
+				},
+				NextState: "Age_Less_Than_20",
+			},
+			Conditional{
+				Condition: &AgeCondition{
+					operator: "<",
+					quantity: 40,
+					unit:     "years",
+				},
+				NextState: "Age_Less_Than_40",
+			},
+			Conditional{
+				Condition: nil,
+				NextState: "Fallback_Conditional_Transition",
+			},
+		},
+	}
+	suite.Equal(conditionalTransition, state.transition)
+}
+
+func (suite *ParserTestSuite) TestParseDistributedTransition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/transitions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Distributed_Transition"].(*SimpleState)
+	distributedTransition := &DistributedTransition{
+		distributions: []Distribution{
+			Distribution{
+				Distribution: 0.3,
+				Transition:   "Distribution_1",
+			},
+			Distribution{
+				Distribution: 0.6,
+				Transition:   "Distribution_2",
+			},
+			Distribution{
+				Distribution: 0.1,
+				Transition:   "Distribution_3",
+			},
+		},
+	}
+	suite.Equal(distributedTransition, state.transition)
+}
+
+func (suite *ParserTestSuite) TestParseComplexTransition() {
+	gmf := new(GMF)
+	err := gmf.loadModule("../fixtures/transitions.json")
+	suite.Nil(err)
+
+	state, _ := gmf.modules[0].states["Complex_Transition"].(*SimpleState)
+	complexTransition := &ComplexTransition{
+		transitions: []Complex{
+			Complex{
+				Condition: &RaceCondition{
+					race: "White",
+				},
+				Distributions: []Distribution{
+					Distribution{
+						Distribution: 0.5,
+						Transition:   "Complex_Distribution_1",
+					},
+					Distribution{
+						Distribution: 0.5,
+						Transition:   "Complex_Distribution_2",
+					},
+				},
+			},
+			Complex{
+				Condition: &RaceCondition{
+					race: "Hispanic",
+				},
+				Distributions: []Distribution{
+					Distribution{
+						Distribution: 0.7,
+						Transition:   "Complex_Distribution_3",
+					},
+					Distribution{
+						Distribution: 0.3,
+						Transition:   "Complex_Distribution_4",
+					},
+				},
+			},
+			Complex{
+				Condition: nil,
+				Distributions: []Distribution{
+					Distribution{
+						Distribution: 1,
+						Transition:   "Fallback_Complex_Transition",
+					},
+				},
+			},
+		},
+	}
+	suite.Equal(complexTransition, state.transition)
+}
+
+// ============================================================================
+// TEST CONDITIONS
+// ============================================================================
+// This section tests parsing the different condition types. This does not test
+// if the conditions evaluate correctly - see conditions_test.go.
+
+func (suite *ParserTestSuite) TestParseConditions() {
+
+}

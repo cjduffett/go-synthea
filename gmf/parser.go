@@ -18,31 +18,31 @@ type JSONModule struct {
 // Type. Since we cannot know the type of state we are about to
 // unmarshal until runtime this is the simplest approach.
 type JSONState struct {
-	Type                  string         `json:"type"`
-	TargetEncounter       string         `json:"target_encounter"`
-	EncounterClass        string         `json:"encounter_class"`
-	Reason                string         `json:"reason"`
-	ConditionOnset        string         `json:"condition_onset"`
-	MedicationOrder       string         `json:"medication_order"`
-	CarePlan              string         `json:"careplan"`
-	Attribute             string         `json:"attribute"`
-	Value                 interface{}    `json:"value"`
-	Action                string         `json:"action"`
-	AssignToAttribute     string         `json:"assign_to_attribute"`
-	ReferencedByAttribute string         `json:"referenced_by_attribute"`
-	Exact                 Exact          `json:"exact"`
-	Range                 Range          `json:"range"`
-	Unit                  string         `json:"unit"`
-	Codes                 []Code         `json:"codes"`
-	Activities            []Code         `json:"activities"`
-	Allow                 JSONCondition  `json:"allow"`
-	Wellness              bool           `json:"wellness"`
-	Symptom               string         `json:"symptom"`
-	Cause                 string         `json:"cause"`
-	DirectTransition      string         `json:"direct_transition"`
-	DistributedTransition []Distribution `json:"distributed_transition"`
-	ConditionalTransition []Conditional  `json:"conditional_transition"`
-	ComplexTransition     []Complex      `json:"complex_transition"`
+	Type                  string            `json:"type"`
+	TargetEncounter       string            `json:"target_encounter"`
+	EncounterClass        string            `json:"encounter_class"`
+	Reason                string            `json:"reason"`
+	ConditionOnset        string            `json:"condition_onset"`
+	MedicationOrder       string            `json:"medication_order"`
+	CarePlan              string            `json:"careplan"`
+	Attribute             string            `json:"attribute"`
+	Value                 interface{}       `json:"value"`
+	Action                string            `json:"action"`
+	AssignToAttribute     string            `json:"assign_to_attribute"`
+	ReferencedByAttribute string            `json:"referenced_by_attribute"`
+	Exact                 Exact             `json:"exact"`
+	Range                 Range             `json:"range"`
+	Unit                  string            `json:"unit"`
+	Codes                 []Code            `json:"codes"`
+	Activities            []Code            `json:"activities"`
+	Allow                 JSONCondition     `json:"allow"`
+	Wellness              bool              `json:"wellness"`
+	Symptom               string            `json:"symptom"`
+	Cause                 string            `json:"cause"`
+	DirectTransition      string            `json:"direct_transition"`
+	DistributedTransition []Distribution    `json:"distributed_transition"`
+	ConditionalTransition []JSONConditional `json:"conditional_transition"`
+	ComplexTransition     []JSONComplex     `json:"complex_transition"`
 }
 
 // JSONCondition is a newly unmarshalled logical condition that must be
@@ -69,6 +69,22 @@ type JSONCondition struct {
 	Attribute             string          `json:"attribute"`
 	Minimum               int             `json:"minimum"`
 	Maximum               int             `json:"maximum"`
+}
+
+// JSONConditional is a newly unmarshalled Conditional element of a
+// conditional transition. The Conditional type can't be used directly
+// because of the added complexity of unmarshalling the Condition.
+type JSONConditional struct {
+	Condition  JSONCondition `json:"condition"`
+	Transition string        `json:"transition"`
+}
+
+// JSONComplex is a newly unmarshalled Complex element of a
+// conditional transition. The Complex type can't be used directly
+// because of the added complexity of unmarshalling the Condition.
+type JSONComplex struct {
+	Condition     JSONCondition  `json:"condition"`
+	Distributions []Distribution `json:"distributions"`
 }
 
 // parseState parses a JSONState into a GMF State based on the state's type.
@@ -161,16 +177,56 @@ func parseTransition(state JSONState) Transition {
 
 	if len(state.ConditionalTransition) > 0 {
 		return &ConditionalTransition{
-			conditionals: state.ConditionalTransition,
+			conditionals: parseConditionalTransition(state.ConditionalTransition),
 		}
 	}
 
 	if len(state.ComplexTransition) > 0 {
 		return &ComplexTransition{
-			transitions: state.ComplexTransition,
+			transitions: parseComplexTransition(state.ComplexTransition),
 		}
 	}
 	panic("No valid transition found")
+}
+
+// parseConditionalTransition handles the added complexity of parsing a conditional
+// with/without a Condition.
+func parseConditionalTransition(jsonConditionals []JSONConditional) []Conditional {
+	conditionals := make([]Conditional, len(jsonConditionals))
+	for i, jcond := range jsonConditionals {
+		var condition Condition
+		if jcond.Condition.ConditionType == "" && i == len(jsonConditionals)-1 {
+			// The last conditional may omit a condition and specify just a transition
+			condition = nil
+		} else {
+			condition = parseCondition(jcond.Condition)
+		}
+		conditionals[i] = Conditional{
+			Condition: condition,
+			NextState: jcond.Transition,
+		}
+	}
+	return conditionals
+}
+
+// parseComplexTransition handles the added complexity of parsing a complex
+// with/without a Condition.
+func parseComplexTransition(jsonComplexes []JSONComplex) []Complex {
+	complexes := make([]Complex, len(jsonComplexes))
+	for i, jcomplex := range jsonComplexes {
+		var condition Condition
+		if jcomplex.Condition.ConditionType == "" && i == len(jsonComplexes)-1 {
+			// The last conditional may omit a condition and specify just a transition
+			condition = nil
+		} else {
+			condition = parseCondition(jcomplex.Condition)
+		}
+		complexes[i] = Complex{
+			Condition:     condition,
+			Distributions: jcomplex.Distributions,
+		}
+	}
+	return complexes
 }
 
 // parseCondition parses a JSONCondition into a Condition based

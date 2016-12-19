@@ -12,7 +12,8 @@
     },
 
     "Direct_Transition_Destination": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Conditional_Transition"
     },
 
     "Conditional_Transition": {
@@ -48,15 +49,18 @@
     },
 
     "Age_Less_Than_20": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Conditional_Transition_No_Fallback"
     },
 
     "Age_Less_Than_40": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Conditional_Transition_No_Fallback"
     },
 
     "Fallback_Conditional_Transition": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Conditional_Transition_No_Fallback"
     },
 
     "Conditional_Transition_No_Fallback": {
@@ -76,7 +80,8 @@
     },
 
     "Female": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Distributed_Transition"
     },
 
     "Distributed_Transition": {
@@ -103,15 +108,18 @@
     },
 
     "Distribution_1": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Complex_Transition"
     },
 
     "Distribution_2": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Complex_Transition"
     },
 
     "Distribution_3": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Complex_Transition"
     },
 
     "Complex_Transition": {
@@ -130,11 +138,11 @@
           "distributions": [
             {
               "distribution": 0.5,
-              "transition": "Complex_M_Distribution_1"
+              "transition": "Complex_Distribution_1"
             },
             {
               "distribution": 0.5,
-              "transition": "Complex_M_Distribution_2"
+              "transition": "Complex_Distribution_2"
             }
           ]
         },
@@ -146,11 +154,11 @@
           "distributions": [
             {
               "distribution": 0.7,
-              "transition": "Complex_F_Distribution_1"
+              "transition": "Complex_Distribution_3"
             },
             {
               "distribution": 0.3,
-              "transition": "Complex_F_Distribution_2"
+              "transition": "Complex_Distribution_4"
             }
           ]
         },
@@ -165,24 +173,29 @@
       ]
     },
 
-    "Complex_M_Distribution_1": {
-      "type": "Simple"
+    "Complex_Distribution_1": {
+      "type": "Simple",
+      "direct_transition": "Complex_Transition_No_Fallback"
     },
 
-    "Complex_M_Distribution_2": {
-      "type": "Simple"
+    "Complex_Distribution_2": {
+      "type": "Simple",
+      "direct_transition": "Complex_Transition_No_Fallback"
     },
 
-    "Complex_F_Distribution_1": {
-      "type": "Simple"
+    "Complex_Distribution_3": {
+      "type": "Simple",
+      "direct_transition": "Complex_Transition_No_Fallback"
     },
 
-    "Complex_F_Distribution_2": {
-      "type": "Simple"
+    "Complex_Distribution_4": {
+      "type": "Simple",
+      "direct_transition": "Complex_Transition_No_Fallback"
     },
 
     "Fallback_Complex_Transition": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Complex_Transition_No_Fallback"
     },
 
     "Complex_Transition_No_Fallback": {
@@ -207,7 +220,8 @@
     },
 
     "Male": {
-      "type": "Simple"
+      "type": "Simple",
+      "direct_transition": "Terminal"
     },
 
     "Terminal": {

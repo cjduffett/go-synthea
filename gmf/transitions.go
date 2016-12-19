@@ -22,8 +22,8 @@ func (dt *DirectTransition) follow(entity *entity.Entity, time time.Time) string
 
 // Conditional maps a logical condition to a state name.
 type Conditional struct {
-	Condition Condition `json:"condition"`
-	NextState string    `json:"transition"`
+	Condition Condition
+	NextState string
 }
 
 // ConditionalTransition transitions to a state depending on the
