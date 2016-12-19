@@ -1,6 +1,7 @@
 package gmf
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -38,6 +39,14 @@ func (suite *GMFTestSuite) TestLoadBasicModule() {
 	suite.Equal("Basic Module", module.name)
 	keys := getKeys(module.states)
 	suite.Equal(2, len(keys))
+}
+
+func (suite *GMFTestSuite) TestLoadInvalidModule() {
+	gmf := new(GMF)
+	var err error
+	suite.NotPanics(func() { err = gmf.loadModule("../fixtures/invalid_module.json") })
+	suite.NotNil(err)
+	suite.Equal(errors.New("Invalid module: Missing 'name' or 'states'"), err)
 }
 
 func (suite *GMFTestSuite) TestLoadModules() {
